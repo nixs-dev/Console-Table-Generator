@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1636152641 source:c:\users\x\desktop\console table generator\generator.cpp
+	"Generator.hpp"
+
+1636152751 c:\users\x\desktop\console table generator\generator.hpp
+	<iostream>
+	<string>
+	<vector>
+	<cmath>
+
+1636152110 source:c:\users\x\desktop\console table generator\main.cpp
+	<iostream>
+	"Generator.hpp"
+
