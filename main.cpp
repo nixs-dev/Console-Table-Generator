@@ -6,8 +6,9 @@
 
 int main() {
     std::vector<std::string> columns = {"User", "Idade", "Email"};
-    std::vector<std::string> content = {"Eu", "18", "example@gmail.com"};
-    Generator table_generator(columns, 20);
+    std::vector<int> columns_size = {5, 5, 5};
+    std::vector<std::string> content = {"Eu", "18", "assaasasadadas"};
+    Generator table_generator(columns, columns_size);
 
     for(int i = 0; i < 10; i++) {
         table_generator.insert_row(content);

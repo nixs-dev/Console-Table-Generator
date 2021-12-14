@@ -1,18 +1,26 @@
 #include "Generator.hpp"
 
 
-Generator::Generator(std::vector<std::string> user_columns, int spacing_size) {
+Generator::Generator(std::vector<std::string> user_columns, std::vector<int> size_by_column) {
     columns = user_columns;
-    headers_spacing = round(spacing_size/2);
 
+    calculate_size(size_by_column);
+}
+
+void Generator::calculate_size(std::vector<int> size_by_column) {
     int total_titles_size = 0;
+    int rows_width = 0;
+    int index = 0;
+    columns_size = {};
 
     for(std::string title: columns) {
-        columns_size.push_back(title.size() + (headers_spacing*2));
+        columns_size.push_back(size_by_column[index]);
         total_titles_size += title.size();
+        rows_width += size_by_column[index];
+        index += 1;
     }
 
-    width = total_titles_size + ((headers_spacing * 2) * columns.size()) + columns.size();
+    width = rows_width + columns_size.size();
 }
 
 void Generator::insert_row(std::vector<std::string> row) {
@@ -26,40 +34,61 @@ void Generator::insert_row(std::vector<std::string> row) {
 }
 
 void Generator::draw() {
+    std::string result = "";
+    bool redraw = false;
+
+    calculate_size(columns_size);
+
 
     /*DRAW THE COLUMNS HEADERS*/
 
-    std::cout << std::string(width, '_') << std::endl;
+    result += std::string(width, '_') + "\n";
+
+    int column_index = 0;
 
     for(std::string title: columns) {
-        std::cout << '|' << std::string(headers_spacing, ' ') << title << std::string(headers_spacing, ' ');
-    }
-    std::cout << '|' << std::endl;
+        int to_fill_with_space = columns_size[column_index] - title.size();
 
-    std::cout << std::string(width, '~') << std::endl;
+        result += '|' + title + std::string(to_fill_with_space, ' ');
+        column_index ++;
+    }
+
+    result += '|';
+    result += "\n" + std::string(width, '~') + "\n";
 
 
 
     /*DRAW THE CONTENT*/
-    int column_index = 0;
+    column_index = 0;
 
     for(std::vector<std::string> row: contents) {
+        if(redraw) {
+            break;
+        }
+
         for(std::string value: row) {
             int to_fill_with_space = columns_size[column_index] - value.size();
 
             if(to_fill_with_space >= 0) {
-                std::cout << '|' << value << std::string(to_fill_with_space, ' ');
+                result += '|' + value + std::string(to_fill_with_space, ' ');
             }
             else {
-                //ARRUMA ISSOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-                std::cout << '|' << value;
+                columns_size[column_index] += -(to_fill_with_space);
+                redraw = true;
+                break;
             }
             column_index++;
         }
 
         column_index = 0;
-        std::cout << '|' << std::endl;
-        std::cout << std::string(width, '-') << std::endl;
+        result += '|';
+        result += "\n" + std::string(width, '-') + "\n";
     }
 
+    if(redraw) {
+        draw();
+    }
+    else {
+        std::cout << result;
+    }
 }
